@@ -93,7 +93,90 @@ boundGreet("Hi"); // Вывод: Hi, Jane!
 Знает о возможностях CSS (flex-box и т.д.)
 Понимает зачем нужна микроразметка, знает, что такое адаптивная верстка сайта
 Знает что такое promise и умеет применять его на практике
-Организация модулей (глобальный объект, CommonJS, UMD, ES modules)
+
+# Организация модулей (глобальный объект, CommonJS, UMD, ES modules)
+
+Организация модулей в JavaScript — это ключевой аспект разработки масштабируемых и поддерживаемых приложений. Существует несколько подходов к организации модулей, каждый из которых имеет свои особенности и применяется в зависимости от контекста использования.
+
+Глобальный объект
+-
+
+В начале развития JavaScript код часто организовывался через глобальные переменные и функции. Это простой подход, но он быстро становится неприемлемым по мере роста приложения из-за конфликтов имен и сложности управления зависимостями.
+
+```javascript
+// Глобальный объект
+var myModule = {
+  publicMethod: function() {
+    // Код метода
+  },
+  privateMethod: function() {
+    // Код метода
+  }
+};
+
+// Использование
+myModule.publicMethod();
+```
+
+CommonJS
+-
+
+CommonJS — это модульная система, которая была разработана для серверной стороны и широко используется в Node.js. Модули экспортируются с помощью module.exports или exports, а импортируются с помощью require.
+
+```javascript
+// myModule.js
+const privateMethod = () => {
+  // Код метода
+};
+
+const publicMethod = () => {
+  // Код метода
+};
+
+module.exports = publicMethod;
+
+// app.js
+const myModule = require('./myModule');
+myModule(); // Использование экспортированной функции
+```
+
+UMD (Universal Module Definition)
+-
+
+UMD позволяет создавать модули, совместимые с различными системами модулей, включая CommonJS и AMD, а также с использованием через тег <script> в браузерах. Это достигается путем определения универсального шаблона, который проверяет доступные среды и экспортирует модуль соответствующим образом.
+
+```javascript
+(function (root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    // AMD
+    define([], factory);
+  } else if (typeof module === 'object' && module.exports) {
+    // CommonJS
+    module.exports = factory();
+  } else {
+    // Глобальная переменная для браузеров
+    root.myModule = factory();
+  }
+}(this, function () {
+  // Модуль
+  return {};
+}));
+```
+
+ES Modules
+-
+ES Modules (ECMAScript Modules) — это стандартная система модулей в JavaScript, введенная в ES6 (ES2015). Она использует ключевые слова import и export для импорта и экспорта функций, объектов или значений между модулями.
+
+```javascript
+// myModule.js
+export const myFunction = () => {
+  // Код функции
+};
+
+// app.js
+import { myFunction } from './myModule';
+myFunction(); // Использование импортированной функции
+```
 
 # Конфигурирование сборщиков vite / webpack / esbuild / bun
 
