@@ -103,7 +103,77 @@ css modules
 
 # Понимает, как устроены и как манипулировать объектами в JS. Что такое объект-прототип
 
+Объекты в JavaScript представляют собой набор свойств и методов, которые описывают характеристики и поведение объекта 5. Ключевые моменты:
 
+Объекты состоят из пар ключ-значение, где ключ - это строка или символ, а значение может быть любым типом данных, включая функции. Свойства объекта можно создавать, читать, изменять и удалять динамически во время выполнения программы.
+
+Создание объектов
+Использование литерала объекта:
+```javascript
+let person = {
+  name: "Иван",
+  age: 30,
+  sayHello: function() { console.log("Привет!"); }
+};
+```
+
+Использование конструктора Object:
+```javascript
+let obj = new Object();
+obj.name = "Пётр";
+obj.age = 25;
+```
+
+Использование классов (ECMAScript 2015+):
+```javascript
+class Person {
+  constructor(name, age) {
+    this.name = name;
+    this.age = age;
+  }
+
+  sayHello() {
+    console.log(`Привет, меня зовут ${this.name}!`);
+  }
+}
+
+let ivan = new Person("Иван", 30);
+```
+
+Доступ к свойствам
+Через точку: ```person.name```
+Через квадратные скобки: ```person["name"]```
+
+Изменение свойств:
+```person.age = 31;```
+```person["age"] = 32;```
+
+Добавление новых свойств:
+```person.country = "Россия";```
+
+Удаление свойств:
+```delete person.age;```
+
+Проверка существования свойства:
+```javascript
+if ("name" in person) {
+  console.log("Свойство name существует");
+}
+```
+
+Перебор свойств:
+```javascript
+for (let prop in person) {
+  console.log(`${prop}: ${person[prop]}`);
+}
+```
+
+Клонирование объектов:
+```javascript
+let copy = Object.assign({}, person);
+// или
+let deepCopy = JSON.parse(JSON.stringify(person));
+```
 
 # Знает, как устроены область видимости в JS
 
