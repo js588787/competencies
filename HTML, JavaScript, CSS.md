@@ -1,7 +1,10 @@
 # Знает, как можно «запостить» файл на сервер
 
-
-
+Через ```FormData```:
+```javascript
+const formData = new FormData();
+formData.append('file', file);
+```
 # Способы работы со стилями (scoped, css modules, БЭМ, глобальные стили) - плюсы и минусы каждого способа
 
 scoped
@@ -21,7 +24,6 @@ scoped
 - Необходимость дополнительных инструментов: Для работы со scoped стильями часто требуется использование препроцессоров или сборщиков (например, Webpack).
 - Ограниченная совместимость: Некоторые старые браузеры могут не поддерживать все возможности, необходимые для корректной работы scoped стилей.
  
-
 css modules
 -
 Это подход к организации CSS стилей, который позволяет организовать стили в модулях, таким образом, обеспечивая локальную область видимости, избегая конфликтов имен. 
@@ -44,7 +46,7 @@ css modules
 
 Блок
 
-```javascript
+```html
 <div class="button">
   <span class="button__text">Кнопка</span>
 </div>
@@ -52,7 +54,7 @@ css modules
 
 Элемент
 
-```javascript
+```html
 <div class="menu">
   <nav class="menu__list">
     <ul class="menu__items">
@@ -64,7 +66,7 @@ css modules
 
 Модификатор
 
-```javascript
+```html
 <button class="button button_size_l button_color_blue">
   <span class="button__text">Крупная синяя кнопка</span>
 </button>
