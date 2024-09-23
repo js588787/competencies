@@ -16,67 +16,100 @@
 
 Давайте рассмотрим пример использования паттерна Декоратор в TypeScript:
 ```javascript
-// Интерфейс компонента
+/**
+ * Базовый интерфейс Компонента определяет поведение, которое изменяется
+ * декораторами.
+ */
 interface Component {
     operation(): string;
 }
 
-// Конкретный компонент
+/**
+ * Конкретные Компоненты предоставляют реализации поведения по умолчанию. Может
+ * быть несколько вариаций этих классов.
+ */
 class ConcreteComponent implements Component {
-    operation(): string {
-        return 'Конкретный компонент';
+    public operation(): string {
+        return 'ConcreteComponent';
     }
 }
 
-// Базовый декоратор
-abstract class Decorator implements Component {
+/**
+ * Базовый класс Декоратора следует тому же интерфейсу, что и другие компоненты.
+ * Основная цель этого класса - определить интерфейс обёртки для всех конкретных
+ * декораторов. Реализация кода обёртки по умолчанию может включать в себя поле
+ * для хранения завёрнутого компонента и средства его инициализации.
+ */
+class Decorator implements Component {
     protected component: Component;
 
     constructor(component: Component) {
         this.component = component;
     }
 
-    abstract operation(): string;
+    /**
+     * Декоратор делегирует всю работу обёрнутому компоненту.
+     */
+    public operation(): string {
+        return this.component.operation();
+    }
 }
 
-// Конкретный декоратор
+/**
+ * Конкретные Декораторы вызывают обёрнутый объект и изменяют его результат
+ * некоторым образом.
+ */
 class ConcreteDecoratorA extends Decorator {
-    constructor(component: Component) {
-        super(component);
-    }
-
-    operation(): string {
-        return `Декоратор A: ${this.component.operation()}`;
+    /**
+     * Декораторы могут вызывать родительскую реализацию операции, вместо того,
+     * чтобы вызвать обёрнутый объект напрямую. Такой подход упрощает расширение
+     * классов декораторов.
+     */
+    public operation(): string {
+        return `ConcreteDecoratorA(${super.operation()})`;
     }
 }
 
-// Еще один декоратор
+/**
+ * Декораторы могут выполнять своё поведение до или после вызова обёрнутого
+ * объекта.
+ */
 class ConcreteDecoratorB extends Decorator {
-    constructor(component: Component) {
-        super(component);
-    }
-
-    operation(): string {
-        return `Декоратор B: ${this.component.operation()}`;
+    public operation(): string {
+        return `ConcreteDecoratorB(${super.operation()})`;
     }
 }
 
-// Клиентский код
+/**
+ * Клиентский код работает со всеми объектами, используя интерфейс Компонента.
+ * Таким образом, он остаётся независимым от конкретных классов компонентов, с
+ * которыми работает.
+ */
 function clientCode(component: Component) {
-    console.log(`Результат: ${component.operation()}`);
+    // ...
+
+    console.log(`RESULT: ${component.operation()}`);
+
+    // ...
 }
 
-// Пример использования
-const component = new ConcreteComponent();
-console.log('Клиент: Используем простой компонент:');
-clientCode(component);
+/**
+ * Таким образом, клиентский код может поддерживать как простые компоненты...
+ */
+const simple = new ConcreteComponent();
+console.log('Client: I\'ve got a simple component:');
+clientCode(simple);
+console.log('');
 
-const decorator1 = new ConcreteDecoratorA(component);
-console.log('\nКлиент: Используем компонент с декоратором A:');
-clientCode(decorator1);
-
+/**
+ * ...так и декорированные.
+ *
+ * Обратите внимание, что декораторы могут обёртывать не только простые
+ * компоненты, но и другие декораторы.
+ */
+const decorator1 = new ConcreteDecoratorA(simple);
 const decorator2 = new ConcreteDecoratorB(decorator1);
-console.log('\nКлиент: Используем компонент с декораторами A и B:');
+console.log('Client: Now I\'ve got a decorated component:');
 clientCode(decorator2);
 ```
 
