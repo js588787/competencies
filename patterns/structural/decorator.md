@@ -17,20 +17,21 @@
 Давайте рассмотрим пример использования паттерна Декоратор в TypeScript:
 ```javascript
 /**
+/**
  * Базовый интерфейс Компонента определяет поведение, которое изменяется
  * декораторами.
  */
-interface Component {
-    operation(): string;
+interface Coffee {
+    make(): string;
 }
 
 /**
  * Конкретные Компоненты предоставляют реализации поведения по умолчанию. Может
  * быть несколько вариаций этих классов.
  */
-class ConcreteComponent implements Component {
-    public operation(): string {
-        return 'ConcreteComponent';
+export class SimpleCoffee implements Coffee {
+    public make(): string {
+        return 'Кофеёк';
     }
 }
 
@@ -40,87 +41,71 @@ class ConcreteComponent implements Component {
  * декораторов. Реализация кода обёртки по умолчанию может включать в себя поле
  * для хранения завёрнутого компонента и средства его инициализации.
  */
-class Decorator implements Component {
-    protected component: Component;
+export class CoffeeDecorator implements Coffee {
+    protected component: Coffee;
 
-    constructor(component: Component) {
+    constructor(component: Coffee) {
         this.component = component;
     }
 
     /**
      * Декоратор делегирует всю работу обёрнутому компоненту.
      */
-    public operation(): string {
-        return this.component.operation();
+    public make(): string {
+        return this.component.make();
     }
 }
+
+import { CoffeeDecorator } from "./CoffeeDecorator";
 
 /**
  * Конкретные Декораторы вызывают обёрнутый объект и изменяют его результат
  * некоторым образом.
  */
-class ConcreteDecoratorA extends Decorator {
+export class MilkDecorator extends CoffeeDecorator {
     /**
      * Декораторы могут вызывать родительскую реализацию операции, вместо того,
      * чтобы вызвать обёрнутый объект напрямую. Такой подход упрощает расширение
      * классов декораторов.
      */
-    public operation(): string {
-        return `ConcreteDecoratorA(${super.operation()})`;
+    public make(): string {
+        return `${super.make()}, с молоком`;
     }
 }
+
+import { CoffeeDecorator } from "./CoffeeDecorator";
 
 /**
  * Декораторы могут выполнять своё поведение до или после вызова обёрнутого
  * объекта.
  */
-class ConcreteDecoratorB extends Decorator {
-    public operation(): string {
-        return `ConcreteDecoratorB(${super.operation()})`;
+export class ShugarDecorator extends CoffeeDecorator {
+    public make(): string {
+        return `${super.make()}, c сахаром`;
     }
 }
 
 /**
- * Клиентский код работает со всеми объектами, используя интерфейс Компонента.
- * Таким образом, он остаётся независимым от конкретных классов компонентов, с
- * которыми работает.
+ * Клиентский код
  */
-function clientCode(component: Component) {
-    // ...
 
-    console.log(`RESULT: ${component.operation()}`);
+const name = ref('В чашке пусто');
 
-    // ...
-}
+const makeCoffie = () => {
+    const coffee = new SimpleCoffee();
+    name.value = coffee.make();
+};
 
-/**
- * Таким образом, клиентский код может поддерживать как простые компоненты...
- */
-const simple = new ConcreteComponent();
-console.log('Client: I\'ve got a simple component:');
-clientCode(simple);
-console.log('');
+const makeCappuchino = () => {
+    const coffee = new SimpleCoffee();
+    const cappuchino = new MilkDecorator(coffee);
+    name.value = cappuchino.make();
+};
 
-/**
- * ...так и декорированные.
- *
- * Обратите внимание, что декораторы могут обёртывать не только простые
- * компоненты, но и другие декораторы.
- */
-const decorator1 = new ConcreteDecoratorA(simple);
-const decorator2 = new ConcreteDecoratorB(decorator1);
-console.log('Client: Now I\'ve got a decorated component:');
-clientCode(decorator2);
+const makeCappuchinoWithShugar = () => {
+    const coffee = new SimpleCoffee();
+    const cappuchino = new MilkDecorator(coffee);
+    const cappuchinoWithShugar = new ShugarDecorator(cappuchino);
+    name.value = cappuchinoWithShugar.make()
+};
 ```
-
-В этом примере:
-- Мы определили интерфейс Component для всех компонентов и декораторов.
-- ConcreteComponent реализует базовый компонент.
-- Decorator - это абстрактный класс для всех декораторов.
-- ConcreteDecoratorA и ConcreteDecoratorB реализуют конкретные декораторы.
-- Клиентский код использует все эти компоненты и декораторы.
-
-Преимущества использования паттерна Декоратор
-- Гибкость: можно добавлять новые обязанности к объекту динамически.
-- Расширяемость: легко создавать различные комбинации декораторов.
-- Сохранение существующего кода: не требуется изменять исходные классы.
